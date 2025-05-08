@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="cs.css">
+</head>
+<body>
+    <div class="container">
+        <h3>Pomodoro Timer</h3>
+        <h4 style="font-size: 1.5rem;" class="showtime">Work Time!</h4>
+
+        <div class="center"> 
+            <div class="work">
+            <h2>Work</h2>
+            <div class="work-time">25:00</div>
+        </div>
+       <div class="cycle">
+        <h2>Cycle</h2>
+        <div class="cycle-count">0</div>
+
+       </div>
+        <div class="break">
+            <h2>Break time</h2>
+            <div class="break-time">5:00</div>    
+        </div></div>
+       
+       <div class="btngroup">
+        <button class="start">Start</button>
+        <button class="restart">ReStart</button>
+        <button class="pause">Pause</button>
+
+       </div>
+        
+    </div>
+    <script>
+        // for button to display
+        let startbtn = document.querySelector(".start");
+        let restartbtn =document.querySelector(".restart");
+        let pausebtn = document.querySelector(".pause");
+//fordisplaycallingfromhtml
+        let workdisplay = document.querySelector(".work-time");
+        let breakdisplay = document.querySelector(".break-time");
+        let cycledisplay = document.querySelector(".cycle-count");
+        let showtime = document.querySelector(".showtime")
+
+        //variables
+        let worktime = 1500;//forworkseconds
+        let breaktime = 300;//for break seconds
+
+        let currentTime= worktime;//timerstartswithworktime so first give it later it will change
+
+        let cyclecount = 0;
+
+        let interval;//give it setinterval to add in clearinterval
+
+        let iswork = true;//to track current mode start with work mode so give it first
+
+        function formatTime(seconds){
+            let minutes= Math.floor(seconds/60);//change to minute
+
+            let remainingSeconds = seconds % 60;  
+             // Remaining seconds after minutes are calculated
+
+
+             return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+
+
+        }
+
+
+
+        function updatedisplay(){
+            if(iswork){
+                workdisplay.textContent = formatTime(currentTime);
+            }else{
+                breakdisplay.textContent=formatTime(currentTime);
+            }
+            if(iswork){
+                showtime.textContent="Work Time!"
+            }else{
+                showtime.textContent="Break Time!"
+            }
+        }
+
+        function switchmode(){
+            iswork = !iswork;
+         
+          //change it work if it is true else break
+          currentTime = iswork?worktime:breaktime;
+          //if it is break count;
+          if(!iswork){
+            cyclecount++;
+          }
+          cycledisplay.textContent=cyclecount;
+
+            
+        }
+
+        function starttime(){
+            interval = setInterval(() => {
+                currentTime--;//decrease 1 by 1
+
+                updatedisplay();//to appear on web page
+
+                if(currentTime===0){
+                    clearInterval(interval);//if time run out
+                    switchmode();//swtich whether it is work or break
+                    starttime();//and startthimethodagian
+                }
+            }, 1000);
+
+
+        }
+
+        startbtn.addEventListener("click",()=>{
+            starttime();
+            startbtn.disabled=true;
+
+        });
+
+
+            pausebtn.addEventListener("click",()=>{
+                startbtn.disabled=false;
+
+                clearInterval(interval);
+            });
+
+
+
+            restartbtn.addEventListener("click",()=>{
+                startbtn.disabled=false;
+
+                clearInterval(interval);
+                currentTime=worktime;
+
+                iswork=true;
+                cyclecount=0;
+                updatedisplay();
+                cycledisplay.textContent=cyclecount;
+
+            })
+
+        
+
+
+
+ </script>
+</body>
+</html>
